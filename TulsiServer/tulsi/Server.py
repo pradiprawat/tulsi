@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Copyright (c) 2015 Vedams Software Solutions PVT LTD
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +14,9 @@
 # implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+import logging.handlers
 import logging
 import socket
 import ConfigParser
@@ -23,7 +28,6 @@ from MessageEncode import MessageEncode
 from HostInfo import HostInfo
 import json
 
-
 class Server():
     """
     classdocs
@@ -34,19 +38,21 @@ class Server():
         Constructor
         """
         # Read the configuration parameters from tulsi.conf
-        self.logger = logging.getLogger("tulsi")
-        try:
+        self.timestr = time.strftime("%Y:%m:%d-%H:%M:%S")
+	logging.basicConfig(filename='/var/log/tulsi.log',level=logging.DEBUG)
+	try:
             self.conf = ConfigParser.ConfigParser()
-            self.conf.read('/etc/swift/tulsi.conf')
-            udp_ip = self.conf.get('tulsi', 'host')
-            udp_port = int(self.conf.get('tulsi', 'port'))
-
+            self.conf.read('/etc/tulsi/tulsi.conf')
+            self.udp_ip = self.conf.get('tulsi', 'host')
+            self.udp_port = int(self.conf.get('tulsi', 'port'))
+	    
         # printing the host and port of tulsi
-            self.logger.info('The IP of the host: %s', self.udp_ip)
-            self.logger.info('The  Port number of the host :%s', self.udp_port)
+            
+            logging.info('%s The IP of the host: %s' % (self.timestr, self.udp_ip))
+            logging.info('%s The  Port number of the host :%s' %  (self.timestr, self.udp_port))
         except:
             # Error message of tulsi not working
-	    self.logger.error('The tulsi configuration file is not found')
+	    logging.error('The tulsi configuration file is not found')
 
         # Creating objects of MessageEncode and HostInfo
         msg_encode = MessageEncode()
@@ -71,7 +77,7 @@ class Server():
             if version == 1:
                 self.ring_data = self.read_ring_file(self.gz_file)
             else:
-                self.logger.error('Unknown ring format version %d' % version)
+                logging.error('%s Unknown ring format version %d' % (self.timestr,version))
                 raise Exception('Unknown ring format version %d' % version)
 
         # While loop to continuously check the status of  swift services and
@@ -86,7 +92,7 @@ class Server():
                                                      self.service, self.drives)
             sock = socket.socket(socket.AF_INET,  # Internet
                                  socket.SOCK_DGRAM)  # UDP
-            sock.sendto(self.message, (udp_ip, udp_port))
+            sock.sendto(self.message, (self.udp_ip,self.udp_port))
             time.sleep(5)
             self.ip_array = []
             self.service = []
@@ -96,9 +102,11 @@ class Server():
     def read_ring_file(self, sgz_file):
         self.json_len, = struct.unpack('!I', self.gz_file.read(4))
         self.ring_dict = json.loads(self.gz_file.read(self.json_len))
-        self.logger.info('Extracted Ring data : %s', self.ring_dict)
+        logging.info('Extracted Ring data : %s', self.ring_dict)
         self.ring_dict['replica2part2dev_id'] = []
         self.partition_count = 1 << (32 - self.ring_dict['part_shift'])
+        #logging.info('%s The Ip from ring file %s' % (self.timestr, self.ring_conf_ip[]]))
+        #logging.info('%s The IP of host machine %s' %(self.timestr, self.ip_array))  
         for x in self.ring_dict['devs']:
             self.mystring = x
             if self.mystring['ip'] in self.my_ring_conf:
@@ -110,5 +118,5 @@ class Server():
                 self.my_ring_conf[self.mystring['ip']] = [self.mystring
                                                           ['device']]
                 self.ring_conf_ip.append(self.mystring['ip'])
-            self.logger.info('The Ip from ring file %s', self.ring_conf_ip)
-            self.logger.info('The IP of host machine %s', self.ip_array)
+                logging.info('%s The Ip from ring file %s' % (self.timestr, self.ring_conf_ip))
+                logging.info('%s The IP of host machine %s' %(self.timestr, self.ip_array))

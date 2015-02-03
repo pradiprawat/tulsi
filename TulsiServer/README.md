@@ -8,9 +8,9 @@ Run the following command in root previlages
 
 git clone https://github.com/vedgithub/tulsi.git
 
-2. cd tulsi/TulsiServer/
+2. cd tulsi/TulsiServer/tulsi
 	
-3. Edit the host ip with Tulsi client IP
+3. Edit the host ip with Tulsi client IP in tulsi.conf
 
 [tulsi]
 

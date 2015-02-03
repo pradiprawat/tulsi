@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2015 Vedams Software Solutions PVT LTD
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
+sys.path.append('/etc/tulsi/')
 from Server import Server
 
 if __name__ == '__main__':
     Tulsi = Server()
- 
-
 
