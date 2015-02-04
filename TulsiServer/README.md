@@ -1,29 +1,33 @@
-TULSI SERVER PACKAGE
+# TULSI SERVER
 
-Installation procedure :
+## Installation Procedure
 
-Run the following command in root previlages 
+Run the folowing Command in root previlages
 
-1. Download the tulsi package in the swift node 
-
-git clone https://github.com/vedgithub/tulsi.git
-
-2. cd tulsi/TulsiServer/tulsi
-	
-3. Edit the host ip with Tulsi client IP in tulsi.conf
-
+1. Download tulsi package in swift node
+```
+git clone git clone https://github.com/vedgithub/tulsi.git
+```
+2. Go to Tulsi server directory.
+```
+cd tulsi/TulsiServer
+```
+3. Execute the tulsi script
+```
+sh tulsi.sh
+```
+3. Edit the /etc/tulsi/tulsi.conf file
+```
 [tulsi]
-
-host = << IP of host >>
-
-4. Run sh tulsi.sh
-
-5. Start the server 
- 
- service tulsi start
-
-
-6.Check the server status 
- 
- service tulsi status 
+host = Tulsi_Clint_IP_Address
+port = 5005
+```
+4 start tulsi server
+```
+service tulsi star
+```
+5. Check the server status
+```
+service tulsi status
+```
 
